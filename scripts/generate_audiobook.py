@@ -103,13 +103,23 @@ class GoogleProvider(Provider):
         self._cred_file.close()
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = self._cred_file.name
         self.client = texttospeech.TextToSpeechClient()
+        self._language_code = "-".join(self.voice.split("-")[:2])
+
+    def __del__(self) -> None:
+        cred_path = getattr(self, "_cred_file", None)
+        if not cred_path:
+            return
+        try:
+            os.unlink(self._cred_file.name)
+        except FileNotFoundError:
+            pass
 
     def synthesize(self, text: str) -> bytes:
         response = self.client.synthesize_speech(
             request={
                 "input": texttospeech.SynthesisInput(text=text),
                 "voice": texttospeech.VoiceSelectionParams(
-                    language_code=self.voice.split("-")[0] + "-" + self.voice.split("-")[1],
+                    language_code=self._language_code,
                     name=self.voice,
                 ),
                 "audio_config": texttospeech.AudioConfig(

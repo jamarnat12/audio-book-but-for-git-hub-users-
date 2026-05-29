@@ -11,6 +11,7 @@ This repo now includes a GitHub Actions workflow at:
 1. Upload/commit your source text files to:
    - `uploads/`
    - Supported formats: `.txt` and `.md`
+   - Subdirectories are supported (the workflow scans recursively).
 2. Trigger the **Build Audiobook Audio** workflow (or push files into `uploads/`).
 3. Download the workflow artifact named `audiobook-output-<run_number>`.
 
