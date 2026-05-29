@@ -44,3 +44,4 @@ Configure in repo settings:
 - Output files:
   - `dist/audiobook.mp3`
   - `dist/audiobook.json` (provider/voice metadata)
+- `ffmpeg` must be available (GitHub-hosted runners already include it).

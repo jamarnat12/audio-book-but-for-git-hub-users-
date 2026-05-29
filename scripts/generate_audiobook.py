@@ -3,6 +3,7 @@ import argparse
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -94,7 +95,7 @@ class GoogleProvider(Provider):
     def __init__(self, credentials_json: str, voice: str):
         if texttospeech is None:
             raise SynthesisError("google-cloud-texttospeech is not installed")
-        if not re.match(r"^[a-z]{2,3}-[A-Z]{2,3}-Wavenet-[A-Za-z0-9]+$", voice):
+        if not re.match(r"^[a-z]{2,3}-[A-Z]{2,3}-WaveNet-[A-Za-z0-9]+$", voice):
             raise SynthesisError("GOOGLE_CLOUD_TTS_VOICE must be a WaveNet voice")
 
         super().__init__(name="google-cloud-tts", voice=voice)
@@ -236,6 +237,9 @@ def read_chapter_files(source_path: Path) -> List[Path]:
 
 
 def concat_mp3_files(segment_paths: List[Path], output_path: Path) -> None:
+    if shutil.which("ffmpeg") is None:
+        raise SynthesisError("ffmpeg is required to combine segments but was not found in PATH")
+
     concat_list_path = output_path.parent / "concat.txt"
     try:
         with concat_list_path.open("w", encoding="utf-8") as handle:
