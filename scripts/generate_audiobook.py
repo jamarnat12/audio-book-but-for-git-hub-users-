@@ -19,6 +19,7 @@ except Exception:  # pragma: no cover - optional dependency at runtime
     texttospeech = None
 
 
+# Conservative chunking to keep requests below provider limits while preserving natural sentence grouping.
 MAX_SEGMENT_CHARS = 1400
 SEGMENT_RETRIES = 4
 REQUEST_TIMEOUT = 120
@@ -93,7 +94,7 @@ class GoogleProvider(Provider):
     def __init__(self, credentials_json: str, voice: str):
         if texttospeech is None:
             raise SynthesisError("google-cloud-texttospeech is not installed")
-        if "wavenet" not in voice.lower():
+        if not re.match(r"^[a-z]{2,3}-[A-Z]{2,3}-Wavenet-[A-Za-z0-9]+$", voice):
             raise SynthesisError("GOOGLE_CLOUD_TTS_VOICE must be a WaveNet voice")
 
         super().__init__(name="google-cloud-tts", voice=voice)
@@ -107,7 +108,7 @@ class GoogleProvider(Provider):
 
     def __del__(self) -> None:
         cred_path = getattr(self, "_cred_file", None)
-        if not cred_path:
+        if cred_path is None:
             return
         try:
             os.unlink(self._cred_file.name)
@@ -229,29 +230,32 @@ def read_chapter_files(source_path: Path) -> List[Path]:
 
 def concat_mp3_files(segment_paths: List[Path], output_path: Path) -> None:
     concat_list_path = output_path.parent / "concat.txt"
-    with concat_list_path.open("w", encoding="utf-8") as handle:
-        for path in segment_paths:
-            handle.write(f"file '{path.resolve()}'\n")
+    try:
+        with concat_list_path.open("w", encoding="utf-8") as handle:
+            for path in segment_paths:
+                handle.write(f"file '{path.resolve()}'\n")
 
-    cmd = [
-        "ffmpeg",
-        "-hide_banner",
-        "-loglevel",
-        "error",
-        "-y",
-        "-f",
-        "concat",
-        "-safe",
-        "0",
-        "-i",
-        str(concat_list_path),
-        "-c:a",
-        "libmp3lame",
-        "-b:a",
-        "160k",
-        str(output_path),
-    ]
-    subprocess.run(cmd, check=True)
+        cmd = [
+            "ffmpeg",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-y",
+            "-f",
+            "concat",
+            "-safe",
+            "0",
+            "-i",
+            str(concat_list_path),
+            "-c:a",
+            "libmp3lame",
+            "-b:a",
+            "160k",
+            str(output_path),
+        ]
+        subprocess.run(cmd, check=True)
+    finally:
+        concat_list_path.unlink(missing_ok=True)
 
 
 def main() -> int:
@@ -307,7 +311,7 @@ def main() -> int:
 
 if __name__ == "__main__":
     try:
-        raise SystemExit(main())
+        sys.exit(main())
     except Exception as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         raise
