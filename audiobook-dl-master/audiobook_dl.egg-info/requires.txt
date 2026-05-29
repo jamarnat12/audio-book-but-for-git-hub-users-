@@ -1,0 +1,15 @@
+appdirs
+attrs
+cssselect
+importlib-resources
+lxml
+m3u8
+mutagen
+pillow
+pycountry
+pycryptodome
+python-dateutil
+requests
+rich
+tomli
+urllib3>=2

@@ -1,0 +1,2 @@
+[console_scripts]
+audiobook-dl = audiobookdl.__main__:main
