@@ -36,7 +36,7 @@ Configure in repo settings:
   - `GOOGLE_APPLICATION_CREDENTIALS_JSON` (optional, full service-account JSON)
 - Variables:
   - `OPENAI_TTS_VOICE` (`onyx` or `nova`, default `onyx`)
-  - `GOOGLE_CLOUD_TTS_VOICE` (must be WaveNet, default `en-US-Wavenet-D`)
+  - `GOOGLE_CLOUD_TTS_VOICE` (must be WaveNet, default `en-US-WaveNet-D`)
 
 ### Notes
 

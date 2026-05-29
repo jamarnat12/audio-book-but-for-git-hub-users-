@@ -39,7 +39,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_TTS_VOICE: ${{ vars.OPENAI_TTS_VOICE || 'onyx' }}
           GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
-          GOOGLE_CLOUD_TTS_VOICE: ${{ vars.GOOGLE_CLOUD_TTS_VOICE || 'en-US-Wavenet-D' }}
+          GOOGLE_CLOUD_TTS_VOICE: ${{ vars.GOOGLE_CLOUD_TTS_VOICE || 'en-US-WaveNet-D' }}
         run: |
           SOURCE_PATH="${{ github.event.inputs.source_path }}"
           python scripts/generate_audiobook.py \

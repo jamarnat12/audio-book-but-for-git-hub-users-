@@ -207,7 +207,7 @@ def build_provider() -> Provider:
     openai_key = os.getenv("OPENAI_API_KEY", "").strip()
     openai_voice = os.getenv("OPENAI_TTS_VOICE", "onyx").strip()
     google_creds = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON", "").strip()
-    google_voice = os.getenv("GOOGLE_CLOUD_TTS_VOICE", "en-US-Wavenet-D").strip()
+    google_voice = os.getenv("GOOGLE_CLOUD_TTS_VOICE", "en-US-WaveNet-D").strip()
 
     if elevenlabs_key and elevenlabs_voice:
         return ElevenLabsProvider(elevenlabs_key, elevenlabs_voice)
