@@ -1,0 +1,11 @@
+[red]Download failed[/red]
+
+Url: {url}
+Status code: {status_code}
+Content-type: {content_type}
+
+Expected status code: {expected_status_code}
+Expected content type: {expected_content_type}
+
+Body:
+{body}
