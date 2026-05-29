@@ -107,11 +107,11 @@ class GoogleProvider(Provider):
         self._language_code = "-".join(self.voice.split("-")[:2])
 
     def __del__(self) -> None:
-        cred_path = getattr(self, "_cred_file", None)
-        if cred_path is None:
+        cred_file = getattr(self, "_cred_file", None)
+        if cred_file is None or not getattr(cred_file, "name", None):
             return
         try:
-            os.unlink(self._cred_file.name)
+            os.unlink(cred_file.name)
         except FileNotFoundError:
             pass
 
@@ -163,6 +163,13 @@ def split_text(text: str, max_chars: int = MAX_SEGMENT_CHARS) -> List[str]:
                 words = sentence.split()
                 word_acc = ""
                 for word in words:
+                    if len(word) > max_chars:
+                        if word_acc:
+                            chunks.append(word_acc)
+                            word_acc = ""
+                        for i in range(0, len(word), max_chars):
+                            chunks.append(word[i : i + max_chars])
+                        continue
                     candidate_word = f"{word_acc} {word}".strip()
                     if len(candidate_word) <= max_chars:
                         word_acc = candidate_word
